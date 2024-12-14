@@ -157,7 +157,7 @@ def test_run_env_remove(monkeypatch):
     )
 
 
-@mock.patch("sys.platform", "win32")
+@mock.patch("nox.command._PLATFORM", "win32")
 def test_run_env_systemroot():
     systemroot = os.environ.setdefault("SYSTEMROOT", "sigil")
 
@@ -434,7 +434,8 @@ def test_custom_stdout(capsys, tmpdir):
 def test_custom_stdout_silent_flag(capsys, tmpdir):
     with open(str(tmpdir / "out.txt"), "w+b") as stdout:  # noqa: SIM117
         with pytest.raises(ValueError, match="silent"):
-            nox.command.run([PYTHON, "-c", 'print("hi")'], stdout=stdout, silent=True)
+            nox.command.run([PYTHON, "-c", 'print("hi")'],
+                            stdout=stdout, silent=True)
 
 
 def test_custom_stdout_failed_command(capsys, tmpdir):
@@ -521,7 +522,8 @@ def test_output_decoding_non_ascii() -> None:
 
 
 def test_output_decoding_utf8_only_fail(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr(nox.popen.locale, "getpreferredencoding", lambda: "utf8")
+    monkeypatch.setattr(
+        nox.popen.locale, "getpreferredencoding", lambda: "utf8")
 
     with pytest.raises(UnicodeDecodeError) as exc:
         nox.popen.decode_output(b"\x95")
@@ -532,7 +534,8 @@ def test_output_decoding_utf8_only_fail(monkeypatch: pytest.MonkeyPatch) -> None
 def test_output_decoding_utf8_fail_cp1252_success(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    monkeypatch.setattr(nox.popen.locale, "getpreferredencoding", lambda: "cp1252")
+    monkeypatch.setattr(
+        nox.popen.locale, "getpreferredencoding", lambda: "cp1252")
 
     result = nox.popen.decode_output(b"\x95")
 
@@ -540,7 +543,8 @@ def test_output_decoding_utf8_fail_cp1252_success(
 
 
 def test_output_decoding_both_fail(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr(nox.popen.locale, "getpreferredencoding", lambda: "ascii")
+    monkeypatch.setattr(
+        nox.popen.locale, "getpreferredencoding", lambda: "ascii")
 
     with pytest.raises(UnicodeDecodeError) as exc:
         nox.popen.decode_output(b"\x95")
